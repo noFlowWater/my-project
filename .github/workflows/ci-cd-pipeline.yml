@@ -61,4 +61,5 @@ jobs:
           key: ${{ secrets.YUSU_SSH_KEY }}
           port: ${{ secrets.SCOUTER01_SSH_PORT }}
           script: |
+            cat /tmp/deployment.yaml
             kubectl apply -f /tmp/deployment.yaml
