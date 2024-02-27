@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-express-app-deployment
+  name: ${APP_NAME}-deployment
   namespace: default
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: my-express-app
+      app: ${APP_NAME}
   template:
     metadata:
       labels:
-        app: my-express-app
+        app: ${APP_NAME}
     spec:
       containers:
-      - name: my-express-app
-        image: noyusu/my-express-app:latest
+      - name: ${APP_NAME}
+        image: noyusu/${APP_NAME}:latest
         ports:
         - containerPort: 3000
 
@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-express-app-service
+  name: ${APP_NAME}-service
   namespace: default
 spec:
   type: LoadBalancer
@@ -33,4 +33,4 @@ spec:
   - port: 80
     targetPort: 3000
   selector:
-    app: my-express-app
+    app: ${APP_NAME}

@@ -22,7 +22,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: noyusu/my-express-app:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ steps.packagejson.outputs.app_name }}:latest
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -30,15 +30,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Copy deployment.yaml to the remote server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SCOUTER01_SSH_HOST }}
-          username: ${{ secrets.SCOUTER01_SSH_USERNAME }}
-          key: ${{ secrets.YUSU_SSH_KEY }}
-          port: ${{ secrets.SCOUTER01_SSH_PORT }}
-          source: "deployment.yaml"
-          target: "/tmp"
+      - name: Get app name from package.json
+        id: packagejson
+        run: echo "::set-output name=app_name::$(jq -r .name package.json)"
+        shell: bash
 
       - name: Deploy to Kubernetes via SSH
         uses: appleboy/ssh-action@master
@@ -48,4 +43,4 @@ jobs:
           key: ${{ secrets.YUSU_SSH_KEY }}
           port: ${{ secrets.SCOUTER01_SSH_PORT }}
           script: |
-            kubectl apply -f /tmp/deployment.yaml
+            kubectl apply -f ./deployment.yaml
