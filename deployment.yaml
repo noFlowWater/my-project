@@ -17,6 +17,7 @@ spec:
       containers:
       - name: ${APP_NAME}
         image: ${DOCKER_USERNAME}/${APP_NAME}:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 
