@@ -43,16 +43,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Get app name from package.json
-        id: packagejson
-        run: echo "app_name=$(jq -r .name package.json)" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Prepare deployment.yaml
         run: |
           sed -i "s/\${DOCKER_USERNAME}/${{ secrets.DOCKER_USERNAME }}/g" deployment.yaml
-          sed -i "s/\${APP_NAME}/${{ steps.packagejson.outputs.app_name }}/g" deployment.yaml
-
+          sed -i "s/\${APP_NAME}/${{ needs.build-and-push.outputs.app_name }}/g" deployment.yaml
 
       - name: Copy deployment.yaml to the remote server
         uses: appleboy/scp-action@master
