@@ -43,6 +43,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Copy deployment.yaml to the remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SCOUTER01_SSH_HOST }}
+          username: ${{ secrets.SCOUTER01_SSH_USERNAME }}
+          key: ${{ secrets.YUSU_SSH_KEY }}
+          port: ${{ secrets.SCOUTER01_SSH_PORT }}
+          source: "deployment.yaml"
+          target: "/tmp"
+
       - name: Deploy to Kubernetes via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -51,4 +61,4 @@ jobs:
           key: ${{ secrets.YUSU_SSH_KEY }}
           port: ${{ secrets.SCOUTER01_SSH_PORT }}
           script: |
-            kubectl apply -f ./deployment.yaml
+            kubectl apply -f /tmp/deployment.yaml
