@@ -57,7 +57,7 @@ jobs:
           source: "deployment.yaml"
           target: "/tmp"
 
-      - name: SSH를 통해 Kubernetes에 배포
+      - name: SSH를 통해 Kubernetes에 배포 및 롤아웃 재시작
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SCOUTER01_SSH_HOST }}
@@ -65,6 +65,8 @@ jobs:
           key: ${{ secrets.YUSU_SSH_KEY }}
           port: ${{ secrets.SCOUTER01_SSH_PORT }}
           script: |
-            cat /tmp/deployment.yaml
+            DEPLOYMENT_NAME=$(awk '/metadata:/{flag=1;next}/spec:/{flag=0}flag && /name:/{print $2;exit}' /tmp/deployment.yaml)
+            echo "Deployment name extracted: $DEPLOYMENT_NAME"
             kubectl apply -f /tmp/deployment.yaml
-      
+            kubectl rollout restart deployment $DEPLOYMENT_NAME
+    
