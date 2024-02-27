@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ${APP_NAME}
-        image: noyusu/${APP_NAME}:latest
+        image: ${DOCKER_USERNAME}/${APP_NAME}:latest
         ports:
         - containerPort: 3000
 
