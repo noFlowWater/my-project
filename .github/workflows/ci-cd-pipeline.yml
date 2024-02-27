@@ -38,8 +38,14 @@ jobs:
 
       - name: Prepare deployment.yaml
         run: |
-          sed -i "s/\${DOCKER_USERNAME}/${{ secrets.DOCKER_USERNAME }}/g" ./deployment.yaml
-          sed -i "s/\${APP_NAME}/${{ steps.packagejson.outputs.app_name }}/g" ./deployment.yaml
+          sed -i "s/\${DOCKER_USERNAME}/${{ secrets.DOCKER_USERNAME }}/g" deployment.yaml
+          sed -i "s/\${APP_NAME}/${{ steps.packagejson.outputs.app_name }}/g" deployment.yaml
+
+      - name: Debug deployment.yaml path and content
+        run: |
+          echo "The absolute path of deployment.yaml is: $(pwd)/deployment.yaml"
+          echo "Content of deployment.yaml:"
+          cat deployment.yaml
 
       - name: Deploy to Kubernetes via SSH
         uses: appleboy/ssh-action@master
@@ -49,6 +55,6 @@ jobs:
           key: ${{ secrets.YUSU_SSH_KEY }}
           port: ${{ secrets.SCOUTER01_SSH_PORT }}
           script: |
-            cat /tmp/deployment.yaml
-            kubectl apply -f ./deployment.yaml
+            cat deployment.yaml
+            kubectl apply -f deployment.yaml
       
