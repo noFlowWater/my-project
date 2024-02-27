@@ -23,13 +23,17 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: noyusu/my-express-app:latest
+
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-  
+        uses: actions/checkout@v3
+      
+      - name: List files in the repository
+        run: ls -lR
+
       - name: Deploy to Kubernetes via SSH
         uses: appleboy/ssh-action@master
         with:
